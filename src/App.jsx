@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { COLORS } from './data';
 import HomeView from './views/HomeView';
 import PractitionerView from './views/PractitionerView';
 import ResearcherView from './views/ResearcherView';
 import RegulatorView from './views/RegulatorView';
+import PublicView from './views/PublicView';
 
 const VIEWS = [
   { id: 'home', label: 'Home', icon: '🏠' },
@@ -15,6 +16,10 @@ const VIEWS = [
 
 export default function App() {
   const [view, setView] = useState('home');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [view]);
 
   return (
     <div style={{ minHeight: '100vh' }}>
@@ -54,7 +59,7 @@ export default function App() {
         {view === 'pract' && <PractitionerView />}
         {view === 'research' && <ResearcherView />}
         {view === 'regulator' && <RegulatorView />}
-        {view === 'public' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Public data view — Phase 6 will build this</div>}
+        {view === 'public' && <PublicView />}
       </main>
     </div>
   );
