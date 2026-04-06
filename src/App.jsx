@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { COLORS } from './data';
+import HomeView from './views/HomeView';
 
 const VIEWS = [
   { id: 'home', label: 'Home', icon: '🏠' },
@@ -46,7 +47,7 @@ export default function App() {
 
       {/* View content */}
       <main>
-        {view === 'home' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Home view — Phase 2 will build this</div>}
+        {view === 'home' && <HomeView onNavigate={setView} />}
         {view === 'pract' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Practitioner view — Phase 3 will build this</div>}
         {view === 'research' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Researcher view — Phase 4 will build this</div>}
         {view === 'regulator' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Regulator view — Phase 5 will build this</div>}
