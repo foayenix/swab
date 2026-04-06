@@ -1,0 +1,7 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #0A0908;
+  color: rgba(255,255,255,0.85);
+  -webkit-font-smoothing: antialiased;
+}
