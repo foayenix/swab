@@ -3,6 +3,7 @@ import { COLORS } from './data';
 import HomeView from './views/HomeView';
 import PractitionerView from './views/PractitionerView';
 import ResearcherView from './views/ResearcherView';
+import RegulatorView from './views/RegulatorView';
 
 const VIEWS = [
   { id: 'home', label: 'Home', icon: '🏠' },
@@ -52,7 +53,7 @@ export default function App() {
         {view === 'home' && <HomeView onNavigate={setView} />}
         {view === 'pract' && <PractitionerView />}
         {view === 'research' && <ResearcherView />}
-        {view === 'regulator' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Regulator view — Phase 5 will build this</div>}
+        {view === 'regulator' && <RegulatorView />}
         {view === 'public' && <div style={{ padding: 40, textAlign: 'center', color: 'rgba(255,255,255,0.3)' }}>Public data view — Phase 6 will build this</div>}
       </main>
     </div>
