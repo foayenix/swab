@@ -532,12 +532,256 @@ function FormulationDetailView({ formulation, playingAudio, onToggleAudio, onBac
   );
 }
 
+function getPatientStatusBadge(status) {
+  if (status === 'recovered') {
+    return { background: 'rgba(27,107,58,0.16)', color: '#4ADE80', label: 'Recovered' };
+  }
+  if (status === 'improved') {
+    return { background: 'rgba(184,134,11,0.16)', color: '#FCD34D', label: 'Improved' };
+  }
+  return { background: 'rgba(45,75,142,0.15)', color: '#60A5FA', label: 'Tracking' };
+}
+
+function PatientsView({ onSelectPatient }) {
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '6px 14px' }}>
+      {PATIENTS.map((patient) => {
+        const formulationName = FORMULATIONS.find((formulation) => formulation.id === patient.formulationId)?.name || 'Unknown';
+        const badge = getPatientStatusBadge(patient.status);
+
+        return (
+          <button
+            key={patient.id}
+            type="button"
+            onClick={() => onSelectPatient(patient.id)}
+            style={{
+              width: '100%',
+              background: 'none',
+              border: 'none',
+              borderBottom: '1px solid rgba(255,255,255,0.04)',
+              cursor: 'pointer',
+              padding: '10px 0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              textAlign: 'left',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
+            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
+              {patient.sex}
+            </div>
+
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.85)' }}>{patient.ref}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{patient.age} · {patient.sex} · {patient.condition}</div>
+            </div>
+
+            <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>{formulationName}</div>
+              <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: badge.background, color: badge.color }}>
+                {badge.label}
+              </span>
+              <div style={{ marginTop: 4, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>{patient.date}</div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function PatientTimelineView({ patientId, onBack }) {
+  const patient = PATIENTS.find((item) => item.id === patientId);
+  const formulation = FORMULATIONS.find((item) => item.id === patient?.formulationId);
+
+  if (!patient) {
+    return <div style={{ padding: 20, color: 'rgba(255,255,255,0.35)' }}>Patient not found.</div>;
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <button type="button" onClick={onBack} style={{ alignSelf: 'flex-start', fontSize: 13, color: COLORS.forest, background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>← Patients</button>
+
+      <div>
+        <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 20, color: 'rgba(255,255,255,0.9)' }}>{patient.ref}</div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>{patient.age} · {patient.sex} · {patient.date}</div>
+        <div style={{ fontSize: 12, color: COLORS.forest, marginTop: 4 }}>Prescribed: {formulation?.name || 'Unknown formulation'}</div>
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
+        {patient.timeline.map((event, index) => {
+          const dotColor = event.type === 'prescribed' ? COLORS.forest : event.type === 'checkin' ? '#60A5FA' : event.type === 'final' ? '#4ADE80' : 'rgba(255,255,255,0.2)';
+          const eventIcon = event.type === 'consultation' ? '📋' : event.type === 'prescribed' ? '💊' : event.type === 'final' ? '✅' : '🗓️';
+
+          return (
+            <div key={`${event.day}-${event.type}-${index}`} style={{ display: 'flex', gap: 12, paddingBottom: 16, borderLeft: index < patient.timeline.length - 1 ? '2px solid rgba(255,255,255,0.06)' : '2px solid transparent', marginLeft: 6, paddingLeft: 20, position: 'relative' }}>
+              <div style={{ position: 'absolute', left: -7, top: 0, width: 12, height: 12, borderRadius: '50%', background: dotColor }} />
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 2 }}>Day {event.day} · {eventIcon}</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>{event.text}</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 2 }}>{event.date}</div>
+                {event.sideEffect && <span style={{ display: 'inline-block', marginTop: 6, background: 'rgba(158,74,47,0.12)', color: '#F87171', padding: '3px 10px', fontSize: 10, fontWeight: 700, borderRadius: 6 }}>⚠️ {event.sideEffect}</span>}
+                {event.type === 'final' && <div style={{ marginTop: 8, padding: '8px 10px', borderRadius: 8, background: 'rgba(27,107,58,0.12)', color: '#4ADE80', fontSize: 12, fontWeight: 700 }}>Outcome: {patient.status === 'recovered' ? 'Recovered' : patient.status === 'improved' ? 'Improved' : 'Tracking'}</div>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function OutcomesView() {
+  const monthly = [
+    { month: 'Sep', value: 82 },
+    { month: 'Oct', value: 83 },
+    { month: 'Nov', value: 85 },
+    { month: 'Dec', value: 86 },
+    { month: 'Jan', value: 87 },
+    { month: 'Feb', value: 88 },
+  ];
+
+  const byCondition = [
+    { label: 'Tonic/Vitality', value: 91 },
+    { label: 'Fever/Malaria', value: 87 },
+    { label: 'Pile/Stomach', value: 84 },
+    { label: 'Diabetes', value: 82 },
+    { label: 'Body heat', value: 78 },
+    { label: 'Cough', value: 76 },
+  ];
+
+  const byFormulation = [...FORMULATIONS].sort((first, second) => second.effectiveness - first.effectiveness);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Practice effectiveness over time</div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8, height: 140 }}>
+          {monthly.map((item, index) => (
+            <div key={item.month} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: 6 }}>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>{item.value}%</div>
+              <div style={{ width: '100%', maxWidth: 34, height: `${item.value * 1.2}px`, borderRadius: '4px 4px 0 0', background: `rgba(27,107,58,${0.55 + index * 0.06})` }} />
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>{item.month}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Effectiveness by condition</div>
+        {byCondition.map((item) => (
+          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ flex: '0 0 140px', fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>{item.label}</div>
+            <div style={{ flex: 1, height: 20, borderRadius: 4, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+              <div style={{ width: `${item.value}%`, height: '100%', borderRadius: 4, background: 'rgba(27,107,58,0.8)' }} />
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{item.value}%</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Effectiveness by formulation</div>
+        {byFormulation.map((item) => (
+          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ flex: '0 0 140px', fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>{item.name}</div>
+            <div style={{ flex: 1, height: 20, borderRadius: 4, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+              <div style={{ width: `${item.effectiveness}%`, height: '100%', borderRadius: 4, background: item.effectiveness >= 80 ? 'rgba(27,107,58,0.8)' : 'rgba(184,134,11,0.8)' }} />
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{item.effectiveness}%</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CommunityView() {
+  const conditions = [
+    { label: 'Malaria/Fever', value: 39 },
+    { label: 'Diabetes', value: 17 },
+    { label: 'Cough', value: 14 },
+    { label: 'Hypertension', value: 11 },
+    { label: 'Other', value: 19 },
+  ];
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 14 }}><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26 }}>214</div><div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Active members</div></div>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 14 }}><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26 }}>8,420</div><div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Total formulations</div></div>
+        <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 14 }}><div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 26, color: COLORS.forest }}>84%</div><div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>Avg effectiveness</div></div>
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)', marginBottom: 10 }}>Top conditions across HTSN Lagos</div>
+        {conditions.map((item) => (
+          <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ flex: '0 0 130px', fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>{item.label}</div>
+            <div style={{ flex: 1, height: 20, borderRadius: 4, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+              <div style={{ width: `${item.value}%`, height: '100%', borderRadius: 4, background: 'rgba(27,107,58,0.8)' }} />
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{item.value}%</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: 'rgba(27,107,58,0.08)', border: '1px solid rgba(27,107,58,0.18)', borderRadius: 12, padding: 14, fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 1.55 }}>
+        🔒 Individual practitioner data is never shared. Community statistics are aggregated and anonymised. These numbers can be presented to regulators, health authorities, and partners.
+      </div>
+    </div>
+  );
+}
+
+function ReportsView({ onDownload }) {
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 20 }}>
+      <div style={{ fontFamily: "'Instrument Serif', serif", fontSize: 18, color: 'rgba(255,255,255,0.9)' }}>Practice Report — February 2030</div>
+      <div style={{ marginTop: 6, fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Practitioner: Baba Adeyemi · Lagos, Nigeria</div>
+      <div style={{ margin: '12px 0', borderTop: '1px solid rgba(255,255,255,0.08)' }} />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>
+        <div><strong>Consultations this month:</strong> 18</div>
+        <div><strong>Top conditions:</strong> Fever (7), Cough (4), Diabetes (3), Body pains (2), Other (2)</div>
+        <div><strong>Medicines used:</strong> Agbo Iba (7), Agbo Ikọ́ (4), Omi Isu Diabetis (3), Others (4)</div>
+        <div><strong>Outcomes tracked:</strong> 12</div>
+        <div><strong>Overall effectiveness:</strong> 92%</div>
+      </div>
+
+      <button type="button" onClick={onDownload} style={{ marginTop: 14, borderRadius: 8, padding: '10px 20px', background: COLORS.forest, border: `1px solid ${COLORS.forest}`, color: '#fff', cursor: 'pointer', fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 12, fontWeight: 700 }}>
+        📄 Download PDF
+      </button>
+    </div>
+  );
+}
+
+function SettingsView() {
+  const rows = [
+    { label: 'Language', value: 'Yorùbá' },
+    { label: 'Default privacy', value: 'Private (only me)' },
+    { label: 'Notifications', value: 'WhatsApp + App' },
+  ];
+
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '8px 16px' }}>
+      {rows.map((row) => (
+        <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>{row.label}</div>
+          <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.75)' }}>{row.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PractitionerView() {
   const [subView, setSubView] = useState('dashboard');
   const [selectedFormulation, setSelectedFormulation] = useState(null);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [vaultSearch, setVaultSearch] = useState('');
   const [playingAudio, setPlayingAudio] = useState(false);
+  const [reportToast, setReportToast] = useState(false);
 
   const filteredVault = useMemo(() => filterVault(FORMULATIONS, vaultSearch), [vaultSearch]);
 
@@ -619,6 +863,11 @@ export default function PractitionerView() {
                 setPlayingAudio(false);
               }}
             />
+          ) : selectedPatient ? (
+            <PatientTimelineView
+              patientId={selectedPatient}
+              onBack={() => setSelectedPatient(null)}
+            />
           ) : subView === 'dashboard' ? (
             <DashboardView
               onOpenVault={() => {
@@ -629,6 +878,7 @@ export default function PractitionerView() {
               onOpenPatient={() => {
                 if (patientExists) {
                   setSelectedPatient('p47');
+                  setSelectedFormulation(null);
                 }
               }}
               onOpenFormulation={(id = 'f2') => {
@@ -651,6 +901,21 @@ export default function PractitionerView() {
                 setPlayingAudio(false);
               }}
             />
+          ) : subView === 'patients' ? (
+            <PatientsView onSelectPatient={setSelectedPatient} />
+          ) : subView === 'outcomes' ? (
+            <OutcomesView />
+          ) : subView === 'community' ? (
+            <CommunityView />
+          ) : subView === 'reports' ? (
+            <ReportsView
+              onDownload={() => {
+                setReportToast(true);
+                setTimeout(() => setReportToast(false), 3000);
+              }}
+            />
+          ) : subView === 'settings' ? (
+            <SettingsView />
           ) : (
             <div style={{ padding: 40, color: 'rgba(255,255,255,0.3)' }}>Coming in next phase</div>
           )}
@@ -668,6 +933,12 @@ export default function PractitionerView() {
         <span style={{ color: 'rgba(255,255,255,0.28)' }}>→</span>
         <span style={{ color: 'rgba(255,255,255,0.55)' }}>↩ cycle accelerates</span>
       </div>
+
+      {reportToast && (
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: 'rgba(10,9,8,0.95)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 999, padding: '8px 14px', fontSize: 12, color: 'rgba(255,255,255,0.8)', zIndex: 1000 }}>
+          Demo — PDF not available in preview
+        </div>
+      )}
     </div>
   );
 }
