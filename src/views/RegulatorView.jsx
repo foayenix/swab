@@ -29,7 +29,7 @@ export default function RegulatorView() {
   const interestFormulations = FORMULATIONS.filter((item) => item.effectiveness >= 80);
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
+    <div className="view-light view-regulator" style={{ maxWidth: 1100, margin: '0 auto', padding: 24 }}>
       <style>{`
         @keyframes cityPulse {
           from { transform: scale(1); opacity: 0.85; }
@@ -117,7 +117,7 @@ export default function RegulatorView() {
           </div>
 
           {hoveredBar && (
-            <div style={{ position: 'absolute', right: 10, top: 10, padding: '6px 10px', borderRadius: 8, background: 'rgba(10,9,8,0.95)', border: '1px solid rgba(255,255,255,0.15)', fontSize: 11, color: 'rgba(255,255,255,0.78)' }}>
+            <div style={{ position: 'absolute', right: 10, top: 10, padding: '6px 10px', borderRadius: 8, background: 'var(--bg-alt)', border: '1px solid var(--rule)', fontSize: 11, color: 'var(--ink-soft)' }}>
               {(() => {
                 const item = CONDITION_DATA.find((entry) => entry.label === hoveredBar);
                 return `${item.label}: ${item.percent}% · ${item.cases} tracked cases`;

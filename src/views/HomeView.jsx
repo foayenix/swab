@@ -23,7 +23,7 @@ const roleCards = [
 
 export default function HomeView({ onNavigate }) {
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '40px 24px' }}>
+    <div className="view-light view-home" style={{ maxWidth: 720, margin: '0 auto', padding: '40px 24px' }}>
       {/* Badge */}
       <div style={{ textAlign: 'center', marginBottom: 32 }}>
         <span style={{

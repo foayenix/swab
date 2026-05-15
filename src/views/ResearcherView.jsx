@@ -50,8 +50,8 @@ function CollaborationModal({ step, onClose, onNext }) {
   const isSent = step === 'sent';
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(10,9,8,0.75)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ width: '100%', maxWidth: 540, background: '#151311', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 14, padding: 20 }}>
+    <div style={{ position: 'fixed', inset: 0, background: 'rgba(13,27,42,0.18)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ width: '100%', maxWidth: 540, background: 'var(--bg)', border: '1px solid var(--rule)', borderRadius: 14, padding: 20 }}>
         {step === 1 && (
           <>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>Request collaboration</div>
@@ -216,7 +216,7 @@ export default function ResearcherView() {
   const selected = selectedFormulation ? FORMULATIONS.find((item) => item.id === selectedFormulation) : null;
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
+    <div className="view-light view-researcher" style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
       <div style={{ display: 'inline-block', padding: '5px 12px', borderRadius: 999, background: 'rgba(184,134,11,0.12)', border: '1px solid rgba(184,134,11,0.24)', color: COLORS.gold, fontSize: 11, fontWeight: 700, marginBottom: 10 }}>
         🔬 Sanko Research Portal
       </div>
