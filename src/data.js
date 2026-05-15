@@ -1,12 +1,12 @@
 export const COLORS = {
-  forest: '#1B6B3A', forestD: '#145A2F', forestL: '#E8F5E9',
+  forest: '#2E5B3F', forestD: '#1F4029', forestL: '#E8F5E9',
   earth: '#2C2117', earthM: '#5C4B3C',
   sand: '#F7F0E6', sandD: '#EDE3D4',
-  gold: '#B8860B', goldL: '#FBF3DC',
-  terra: '#9E4A2F',
-  indigo: '#2D4B8E',
-  cream: '#FDFAF5',
-  bg: '#0A0908',
+  gold: '#C89D3C', goldL: '#FBF3DC',
+  terra: '#C89D3C',
+  indigo: '#0D1B2A',
+  cream: '#F2EDE4',
+  bg: '#F2EDE4',
 };
 
 export const FORMULATIONS = [

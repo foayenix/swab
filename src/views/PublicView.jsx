@@ -16,7 +16,7 @@ export default function PublicView() {
   }, [toast]);
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
+    <div className="view-light view-public" style={{ maxWidth: 900, margin: '0 auto', padding: 24 }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ display: 'inline-block', padding: '5px 12px', borderRadius: 999, background: 'rgba(184,134,11,0.12)', border: '1px solid rgba(184,134,11,0.24)', color: COLORS.gold, fontSize: 11, fontWeight: 700, marginBottom: 10 }}>
           🌍 Open data
@@ -123,7 +123,7 @@ export default function PublicView() {
       </div>
 
       <div style={{ position: 'fixed', left: '50%', bottom: 24, transform: 'translateX(-50%)', transition: 'all 0.2s ease', opacity: toast ? 1 : 0, pointerEvents: 'none' }}>
-        <div style={{ background: 'rgba(10,9,8,0.95)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 999, padding: '8px 14px', fontSize: 12, color: 'rgba(255,255,255,0.84)' }}>
+        <div style={{ background: 'var(--bg-alt)', border: '1px solid var(--rule)', borderRadius: 999, padding: '8px 14px', fontSize: 12, color: 'var(--ink-soft)' }}>
           {toast || ''}
         </div>
       </div>

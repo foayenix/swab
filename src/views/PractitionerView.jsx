@@ -89,7 +89,6 @@ function DashboardView({ onOpenVault, onOpenPatient, onOpenFormulation, onOpenPa
             gap: 10,
             alignItems: 'flex-start',
             padding: '12px 14px',
-            borderRadius: 10,
             border: '1px solid rgba(184,134,11,0.12)',
             background: 'rgba(184,134,11,0.06)',
             color: 'rgba(255,255,255,0.6)',
@@ -289,6 +288,7 @@ function VaultView({ search, onSearchChange, formulations, onSelectFormulation }
             color: 'rgba(255,255,255,0.7)',
             fontSize: 14,
             fontFamily: "'Plus Jakarta Sans', sans-serif",
+            padding: 0,
           }}
         />
       </div>
@@ -789,7 +789,7 @@ export default function PractitionerView() {
   const activeFormulation = selectedFormulation ? FORMULATIONS.find((formulation) => formulation.id === selectedFormulation) : null;
 
   return (
-    <div style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
+    <div className="view-light view-practitioner" style={{ maxWidth: 1200, margin: '0 auto', padding: 24 }}>
       <style>{`
         @keyframes wave {
           from { transform: scaleY(0.5); opacity: 0.5; }
@@ -935,7 +935,7 @@ export default function PractitionerView() {
       </div>
 
       {reportToast && (
-        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: 'rgba(10,9,8,0.95)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 999, padding: '8px 14px', fontSize: 12, color: 'rgba(255,255,255,0.8)', zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', background: 'var(--bg-alt)', border: '1px solid var(--rule)', borderRadius: 999, padding: '8px 14px', fontSize: 12, color: 'var(--ink-soft)', zIndex: 1000 }}>
           Demo — PDF not available in preview
         </div>
       )}
